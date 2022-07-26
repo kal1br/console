@@ -9,16 +9,41 @@ $ composer require kal1br/console
 
 ### Commands registration:
 
-Create command.register.php file in project root
+1) Create a folder and command classes in it (with namespace Command)
+```` php
+<?php
+namespace Command;
+
+class TestCommand extends \ConsoleCommand\src\Command
+{
+
+    public static function getName(): string
+    {
+        return 'test_command';
+    }
+
+    public static function getDescription(): string
+    {
+        return 'some description';
+    }
+
+    public function execute()
+    {
+        $this->print('print test');
+    }
+}
+````
+2) Create command.register.php file in project root (the folder key must contain the path to the folder with commands)
 ```` php
 <?php
 
-use ConsoleCommand\default_commands\NameCommand;
-use ConsoleCommand\default_commands\SayHelloCommand;
+use Command\TestCommand;
 
 return [
-    SayHelloCommand::class,
-    NameCommand::class
+    'folder' => 'commands',
+    'commands' => [
+        TestCommand::class,
+    ],
 ];
 ````
 

@@ -8,8 +8,12 @@ use Exception;
 
 class Kernel
 {
+    const FILE_CONFIG = 'command.register.php';
+    const FOLDER_DEFAULT = 'commands';
+
     protected array $properties;
     protected string $commandName;
+    protected array $config = [];
     protected array $arguments = [];
     protected array $params = [];
     protected array $commands = [];
@@ -17,6 +21,8 @@ class Kernel
     public function __construct($properties)
     {
         $this->properties = $properties;
+        $this->setConfig();
+        $this->autoload($this->config['folder']);
     }
 
     public function run()
@@ -35,9 +41,47 @@ class Kernel
         }
     }
 
+    protected function setConfig()
+    {
+        $path = __DIR__ . '/../../../../' . self::FILE_CONFIG;
+
+        if (file_exists($path)) {
+            $this->config = require_once $path;
+        } else {
+            $this->config['folder'] = self::FOLDER_DEFAULT;
+        }
+
+        $defaultCommands = require_once __DIR__ . '/../' . self::FILE_CONFIG;
+
+        $this->config['commands'] = array_merge($this->config['commands'], $defaultCommands);
+    }
+
     protected function print($message)
     {
         echo $message . PHP_EOL;
+    }
+
+    protected function autoload($folder)
+    {
+        spl_autoload_register(function ($class) use ($folder) {
+
+            $prefix = 'Command\\';
+
+            $base_dir = __DIR__ . '/../../../../' . $folder . '/';
+
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) !== 0) {
+                return;
+            }
+
+            $relative_class = substr($class, $len);
+
+            $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+            if (file_exists($file)) {
+                require $file;
+            }
+        });
     }
 
     protected function printCommands()
@@ -66,7 +110,7 @@ class Kernel
 
     protected function registerCommands()
     {
-        $this->commands = require_once __DIR__ . '/../command.register.php';
+        $this->commands = $this->config['commands'];
     }
 
     /**
