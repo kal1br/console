@@ -18,7 +18,7 @@ class SayHelloCommand extends Command
         return 'render string "hello"';
     }
 
-    public function execute()
+    protected function execute()
     {
         $this->print('hello');
     }

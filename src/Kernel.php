@@ -121,7 +121,7 @@ class Kernel
         foreach ($this->commands as $command) {
             if ($command::getName() === $this->commandName) {
                 $commandClass = new $command($this->arguments, $this->params);
-                $commandClass->execute();
+                $commandClass->run();
                 return true;
             }
         }

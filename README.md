@@ -27,7 +27,7 @@ class TestCommand extends \ConsoleCommand\src\Command
         return 'some description';
     }
 
-    public function execute()
+    protected function execute()
     {
         $this->print('print test');
     }
