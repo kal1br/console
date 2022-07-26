@@ -2,7 +2,7 @@
 
 ## Install
 ```` bash
-$ composer require kal1br/console
+$ composer require kal1br/console:dev-master
 ````
 
 ## Usage
